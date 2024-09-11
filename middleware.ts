@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server';
 
 
 const isPublicRoute = createRouteMatcher([
-    "/signin",
-    "/signup",
+    "/sign-in",
+    "/sign-up",
     "/",
-    "/home"
 ])
+
 
 const isPublicApiRoute = createRouteMatcher([
     "/api/videos"
@@ -20,7 +20,7 @@ export default clerkMiddleware((auth,req)=>{
     const isAccessingDashboard = currentUrl.pathname ==="/home"
     const isApiRequest = currentUrl.pathname.startsWith("/api")
 
-    if(userId && isPublicApiRoute(req) && !isAccessingDashboard){
+    if(userId && isPublicRoute(req) && !isAccessingDashboard){
         return NextResponse.redirect(new URL("/home",req.url))
     }
 
@@ -28,12 +28,14 @@ export default clerkMiddleware((auth,req)=>{
     if(!userId){
         // if user is not logged in and trying to access a protected route
         if(!isPublicRoute(req) && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/signin"))
+            // return NextResponse.redirect(new URL("/sign-in"))
+            return NextResponse.redirect(new URL("/sign-in", req.url))
         }
 
         // if the request is for a protected API and the user is not logged in
         if(isApiRequest && !isPublicApiRoute(req)){
-            return NextResponse.redirect(new URL("/signin"))
+            // return NextResponse.redirect(new URL("/sign-in"))
+            return NextResponse.redirect(new URL("/sign-in", req.url))
         }
     }
     return NextResponse.next()
@@ -42,3 +44,5 @@ export default clerkMiddleware((auth,req)=>{
 export const config = {
     matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
   };
+
+
